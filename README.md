@@ -21,21 +21,21 @@ This is a full-stack web application designed to display 3D models in GLB format
  
  ## 🛠️ Technologies Used
  
- Frontend (frontend directory)
+ Frontend: 
 
-    - React: A JavaScript library for building user interfaces.
+- React: A JavaScript library for building user interfaces.
 
-    - Vite: A fast build tool for modern web projects.
+- Vite: A fast build tool for modern web projects.
 
-    - @react-three/fiber: A React renderer for Three.js, bringing 3D to React.
+- @react-three/fiber: A React renderer for Three.js, bringing 3D to React.
 
-    - @react-three/drei: A collection of useful helpers and abstractions for @react-three/fiber.
+- @react-three/drei: A collection of useful helpers and abstractions for @react-three/fiber.
 
-    - Three.js: A JavaScript 3D library.
+- Three.js: A JavaScript 3D library.
 
-    - React Router DOM: For declarative routing in React applications.
+- React Router DOM: For declarative routing in React applications.
 
-    - Tailwind CSS: A utility-first CSS framework for rapid UI development.
+- Tailwind CSS: A utility-first CSS framework for rapid UI development.
     
     
  Backend (backend directory)
