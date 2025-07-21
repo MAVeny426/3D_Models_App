@@ -90,7 +90,8 @@ PORT=5000
 
 Start the backend server:
 
-```bash npm start
+```bash
+npm start
 # or for development with nodemon
 npm run dev
 ```
