@@ -12,6 +12,8 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
+  const BACKEND_BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,7 +34,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${BACKEND_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +52,6 @@ const Signup = () => {
         setMessage(responseData.msg || 'Registration successful!');
         console.log('Signup successful:', responseData);
 
-        // --- START: Added localStorage storage for user data ---
         if (responseData.token) {
           localStorage.setItem('token', responseData.token);
         }
@@ -60,12 +61,9 @@ const Signup = () => {
         if (responseData.user && responseData.user.email) {
           localStorage.setItem('userEmail', responseData.user.email);
         }
-        // It's good practice to store the whole user object as a string if it's complex
         if (responseData.user) {
           localStorage.setItem('user', JSON.stringify(responseData.user));
         }
-        // --- END: Added localStorage storage for user data ---
-
 
         setFullName('');
         setEmail('');
@@ -73,7 +71,7 @@ const Signup = () => {
         setConfirmPassword('');
 
         setTimeout(() => {
-          navigate('/'); // Navigates to the home page after successful signup
+          navigate('/');
         }, 1500);
 
       } else {
