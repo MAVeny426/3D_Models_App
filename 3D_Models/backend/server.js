@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 import authRouter from './Routes/auth.js';
 import modelRouter from './Routes/model.js';
-import contactRouter from './Routes/contact.js'; // ADDED: Import your new contact router
+import contactRouter from './Routes/contact.js';
 
 dotenv.config();
 
@@ -17,14 +17,32 @@ const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(cors());
+const allowedOrigin = process.env.CORS_ORIGIN;
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || origin === allowedOrigin) {
+      callback(null, true);
+    } else if (allowedOrigin && allowedOrigin.includes(origin)) {
+        callback(null, true);
+    }
+    else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRouter);
 app.use('/api/models', modelRouter);
-app.use('/api/contact', contactRouter); // ADDED: Mount your contact router here
+app.use('/api/contact', contactRouter);
 
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB Connected Successfully!'))
