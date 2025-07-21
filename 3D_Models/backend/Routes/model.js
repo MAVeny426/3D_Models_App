@@ -1,30 +1,15 @@
 import express from 'express';
 import multer from 'multer';
-import FormData from 'form-data'; 
-import fs from 'fs'; 
+import FormData from 'form-data';
 
 import { auth } from '../Middleware/authMiddleware.js';
 import Model from '../Models/UploadFiles.js';
-import nodemailer from 'nodemailer';
 
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const router = express.Router();
-
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_SECURE === 'true',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  tls: {
-    ciphers: 'SSLv3'
-  }
-});
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -71,7 +56,7 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
   console.log('--- Incoming Model Upload Request ---');
   console.log('Authenticated User (req.user):', req.user ? req.user.email : 'N/A');
 
-  let uploadedIpfsCid = null; 
+  let uploadedIpfsCid = null;
 
   try {
     if (!req.user || !req.user.id) {
@@ -139,7 +124,7 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
     }
 
     const pinataData = await pinataResponse.json();
-    uploadedIpfsCid = pinataData.IpfsHash; 
+    uploadedIpfsCid = pinataData.IpfsHash;
     const glbUrl = `${PINATA_GATEWAY}${pinataData.IpfsHash}`;
 
     console.log('Pinata Upload successful, GLB URL:', glbUrl);
@@ -255,40 +240,6 @@ router.delete('/:id', auth, async (req, res) => {
         return res.status(400).json({ msg: 'Invalid model ID format.' });
     }
     res.status(500).json({ msg: 'Server error during model deletion.', error: err.message });
-  }
-});
-
-router.post('/api/contact', async (req, res) => {
-  const { name, email, phone, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: 'Name, email, and message are required.' });
-  }
-
-  try {
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
-      subject: `New Contact Form Submission from ${name}`,
-      html: `
-        <p>You have received a new message from your contact form.</p>
-        <h3>Contact Details:</h3>
-        <ul>
-          <li><strong>Name:</strong> ${name}</li>
-          <li><strong>Email:</strong> ${email}</li>
-          <li><strong>Phone:</strong> ${phone || 'N/A'}</li>
-        </ul>
-        <h3>Message:</h3>
-        <p>${message}</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Message sent successfully! 🎉' });
-
-  } catch (error) {
-    console.error('Error sending contact email:', error);
-    res.status(500).json({ message: 'Failed to send message.', error: error.message });
   }
 });
 
