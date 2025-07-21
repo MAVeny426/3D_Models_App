@@ -207,7 +207,7 @@ const Upload = () => {
                 </div>
                 <div>
                   <label htmlFor="textures" className="block text-gray-700 text-sm font-bold mb-1">Textures</label>
-                  <input type="text" id="textures" name="textures" className="shadow-sm border border-gray-300 rounded w-full py-1.5 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm" value={specs.textures} onChange={handleSpecsChange} placeholder="e.g., High-res PBR" />
+                  <input type="text" id="textures" name="textures" className="shadow-sm border border-gray-300 rounded w-full py-1.5 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500" value={specs.textures} onChange={handleSpecsChange} placeholder="e.g., High-res PBR" />
                 </div>
                 <div>
                   <label htmlFor="format" className="block text-gray-700 text-sm font-bold mb-1">Format</label>

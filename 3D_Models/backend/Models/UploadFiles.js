@@ -1,12 +1,12 @@
+// backend/Models/UploadFiles.js
 import mongoose from 'mongoose';
 
-const uploadFileSchema = new mongoose.Schema({
+const modelSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: String, required: true },
   glbUrl: { type: String, required: true },
-  ipfsCid: { type: String, required: false }, 
-  uploadDate: { type: Date, default: Date.now },
+  ipfsCid: { type: String, required: true }, 
   creator: {
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -17,8 +17,10 @@ const uploadFileSchema = new mongoose.Schema({
       required: true
     }
   },
-  specs: { type: Object }
+  specs: { type: Object }, 
+  uploadDate: { type: Date, default: Date.now },
 });
 
-const UploadFile = mongoose.model('UploadFile', uploadFileSchema);
-export default UploadFile;
+const Model = mongoose.model('Model', modelSchema);
+
+export default Model;
