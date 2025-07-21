@@ -71,18 +71,27 @@ This is a full-stack web application designed to display 3D models in GLB format
   - Git
 
 ## 1. Clone the repository
-```bash git clone git@github.com:MAVeny426/3D_Models_App.git ```
-```bash cd 3D_Models_App/3D_Models ```
+```bash
+git clone git@github.com:MAVeny426/3D_Models_App.git
+ ```
+```bash
+cd 3D_Models_App/3D_Models
+```
 
 ## 2. Backend Setup
-```bash cd backend ```
+```bash 
+cd backend
+```
 
 Install dependencies:
-```bash npm install ```
+```bash 
+npm install
+```
 
 Create a .env file in the backend directory and add the following environment variables:
 
-```bash MONGO_URL=mongodb+srv://venyma504:w7XkOagoujZk4rXP@cluster0.46qrm8i.mongodb.net/3D-Models?retryWrites=true&w=majority&appName=Cluster0
+```bash
+ MONGO_URL=mongodb+srv://venyma504:w7XkOagoujZk4rXP@cluster0.46qrm8i.mongodb.net/3D-Models?retryWrites=true&w=majority&appName=Cluster0
 JWT_SECRET=3d_models
 CORS_ORIGIN=https://threed-models-app-1zkr.onrender.com
 PORT=5000
