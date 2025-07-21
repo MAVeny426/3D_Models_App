@@ -1,4 +1,4 @@
-import React, {useState,useEffect } from 'react';
+import React, {useState,useEffect} from 'react';
 import {Link,useLocation} from 'react-router-dom';
 import Navbar from '../Components/Navbar.jsx';
 
@@ -10,11 +10,13 @@ const Albums = () => {
   const [loading,setLoading] = useState(true);
   const [error,setError] = useState('');
 
+  const BACKEND_BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
+
   useEffect(() => {
     if (location.state?.searchTerm !== searchTerm) {
       setSearchTerm(location.state?.searchTerm || '');
     }
-  }, [location.state?.searchTerm]);
+  }, [location.state?.searchTerm, searchTerm]); 
 
 
   useEffect(() => {
@@ -29,9 +31,10 @@ const Albums = () => {
           return;
         }
 
+        // Construct the full API URL using the base URL
         const apiUrl = searchTerm
-          ? `/api/models?search=${encodeURIComponent(searchTerm)}`
-          : '/api/models/';
+          ? `${BACKEND_BASE_URL}/api/models?search=${encodeURIComponent(searchTerm)}`
+          : `${BACKEND_BASE_URL}/api/models/`; // Changed from /api/models/
 
         const response = await fetch(apiUrl, {
           method: 'GET',
@@ -58,7 +61,7 @@ const Albums = () => {
     };
 
     fetchModels();
-  },[searchTerm]);
+  },[searchTerm, BACKEND_BASE_URL]);
 
   return (
     <>

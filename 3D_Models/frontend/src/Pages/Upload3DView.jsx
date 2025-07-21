@@ -1,4 +1,3 @@
-// src/Pages/Upload3DView.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Components/Navbar.jsx';
@@ -9,6 +8,8 @@ const Upload3DView = () => {
   const [model, setModel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const BACKEND_BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
   useEffect(() => {
     const fetchModel = async () => {
@@ -22,7 +23,7 @@ const Upload3DView = () => {
           return;
         }
 
-        const response = await fetch(`/api/models/${id}`, {
+        const response = await fetch(`${BACKEND_BASE_URL}/api/models/${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -47,7 +48,7 @@ const Upload3DView = () => {
     };
 
     fetchModel();
-  }, [id]);
+  }, [id, BACKEND_BASE_URL]); 
 
   if (loading) {
     return (
@@ -89,9 +90,7 @@ const Upload3DView = () => {
         <h1 className="text-3xl font-bold mb-4 text-center">{model.name}</h1>
         <p className="text-gray-700 text-center mb-6">{model.description}</p>
 
-        {/* Main layout container using Grid and making columns equal height */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-          {/* Left Side: Details & Specifications */}
           <div className="order-last md:order-first p-4 bg-white rounded-lg shadow-md flex flex-col">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">Details & Specifications</h2>
             <div className="text-gray-700 space-y-2 flex-grow">
@@ -120,11 +119,9 @@ const Upload3DView = () => {
             </div>
           </div>
 
-          {/* Right Side: 3D Model Viewer */}
-          {/* Changed h-[60vh] to h-full. The ModelViewer component itself also needs to handle h-full internally. */}
-          <div className="order-first md:order-last w-full **h-full** bg-gray-100 rounded-lg shadow-lg">
+          <div className="order-first md:order-last w-full h-full bg-gray-100 rounded-lg shadow-lg">
             {model.glbUrl ? (
-              <ModelViewer url={model.glbUrl}  /> 
+              <ModelViewer url={model.glbUrl}  />
             ) : (
               <div className="text-gray-500 flex justify-center items-center h-full">GLB file not available.</div>
             )}

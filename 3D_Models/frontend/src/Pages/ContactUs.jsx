@@ -10,6 +10,9 @@ const ContactUs = () => {
   });
   const [status,setStatus] = useState('');
 
+  const BACKEND_BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
+
+
   const handleChange = (e) => {
     const { name,value} = e.target;
     setFormData(prevState => ({
@@ -23,7 +26,7 @@ const ContactUs = () => {
     setStatus('Sending...');
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(`${BACKEND_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

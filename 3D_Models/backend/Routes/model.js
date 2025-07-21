@@ -1,4 +1,3 @@
-// Routes/model.js
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -6,11 +5,11 @@ import { promises as fsPromises } from 'fs';
 import { fileURLToPath } from 'url';
 import { auth } from '../Middleware/authMiddleware.js';
 import Model from '../Models/UploadFiles.js';
-import nodemailer from 'nodemailer'; // ADD THIS LINE
+import nodemailer from 'nodemailer'; 
 
-import dotenv from 'dotenv'; // Keep this if you use dotenv in this file for transporter
+import dotenv from 'dotenv'; 
 
-dotenv.config(); // Ensure dotenv is loaded here for transporter access
+dotenv.config();
 
 const router = express.Router();
 

@@ -13,7 +13,6 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ msg: 'User already exists with this email.' });
     }
 
-    // Assign 'user' role to all new registrations
     const role = 'user'; 
 
     user = new User({ name, email, password, role });
