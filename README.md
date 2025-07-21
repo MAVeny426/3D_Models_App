@@ -5,6 +5,7 @@ This is a full-stack web application designed to display 3D models in GLB format
 ## 🚀 Live Demo
 - Frontend: ```bash https://threed-models-app-1zkr.onrender.com ```
 - Backend : ```bash https://threed-models-app.onrender.com ```
+  
 
 ## ✨ Features
   - 3D Model Display: Renders GLB-formatted 3D models on the web.
@@ -34,6 +35,7 @@ This is a full-stack web application designed to display 3D models in GLB format
     - React Router DOM: For declarative routing in React applications.
 
     - Tailwind CSS: A utility-first CSS framework for rapid UI development.
+    
 -- Backend (backend directory)
 
    - Node.js: JavaScript runtime environment.
@@ -76,15 +78,19 @@ Install dependencies:
 ```bash npm install ```
 
 Create a .env file in the backend directory and add the following environment variables:
+
 ```bash MONGO_URL=mongodb+srv://venyma504:w7XkOagoujZk4rXP@cluster0.46qrm8i.mongodb.net/3D-Models?retryWrites=true&w=majority&appName=Cluster0
 JWT_SECRET=3d_models
 CORS_ORIGIN=https://threed-models-app-1zkr.onrender.com
-PORT=5000 ```
+PORT=5000
+```
 
 Start the backend server:
+
 ```bash npm start
 # or for development with nodemon
-npm run dev ```
+npm run dev
+```
 
 The backend will run on http://localhost:5000
 
@@ -96,7 +102,9 @@ Install dependencies:
 ```
 
 ```bash
-npm install ```
+npm install
+```
+
 Create a .env file in the frontend directory and add the following environment variables if your frontend needs to know the backend URL during local development:
 
 ## Code snippet
@@ -106,7 +114,8 @@ Start the frontend development server:
 
 ``` bash
 
-npm run dev ```
+npm run dev
+```
 
 The frontend will typically run on http://localhost:5173 (Vite's default).
 
