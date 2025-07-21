@@ -20,7 +20,7 @@ This is a full-stack web application designed to display 3D models in GLB format
  
  ## 🛠️ Technologies Used
 
- -- Frontend (frontend directory)
+-- Frontend (frontend directory)
 
     - React: A JavaScript library for building user interfaces.
 
@@ -35,6 +35,7 @@ This is a full-stack web application designed to display 3D models in GLB format
     - React Router DOM: For declarative routing in React applications.
 
     - Tailwind CSS: A utility-first CSS framework for rapid UI development.
+    
     
 -- Backend (backend directory)
 
@@ -57,6 +58,7 @@ This is a full-stack web application designed to display 3D models in GLB format
    - CORS: Node.js package for providing a Connect/Express middleware that can be used to enable CORS.
 
    - Dotenv: Loads environment variables from a .env file.
+     
 
   ## 🚀 Getting Started
 
