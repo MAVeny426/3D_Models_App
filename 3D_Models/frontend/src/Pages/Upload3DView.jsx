@@ -48,7 +48,7 @@ const Upload3DView = () => {
     };
 
     fetchModel();
-  }, [id, BACKEND_BASE_URL]); 
+  }, [id, BACKEND_BASE_URL]);
 
   if (loading) {
     return (
@@ -121,7 +121,10 @@ const Upload3DView = () => {
 
           <div className="order-first md:order-last w-full h-full bg-gray-100 rounded-lg shadow-lg">
             {model.glbUrl ? (
-              <ModelViewer url={model.glbUrl}  />
+              <>
+                {console.log("Model GLB URL received from API:", model.glbUrl)}
+                <ModelViewer url={model.glbUrl}  />
+              </>
             ) : (
               <div className="text-gray-500 flex justify-center items-center h-full">GLB file not available.</div>
             )}

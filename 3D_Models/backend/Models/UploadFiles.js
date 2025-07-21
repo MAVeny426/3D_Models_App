@@ -1,62 +1,24 @@
 import mongoose from 'mongoose';
 
-const ModelSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true 
-  },
-  description: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  category: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true 
-  },
-  glbUrl: { 
-    type: String,
-    required: true
-  },
+const uploadFileSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  category: { type: String, required: true },
+  glbUrl: { type: String, required: true },
+  s3Key: { type: String, required: false },
+  uploadDate: { type: Date, default: Date.now },
   creator: {
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    email: { 
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-      match: [/^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$/, 'Please fill a valid email address'] 
-    },
-    website: { 
-      type: String,
-      trim: true,
-      match: [/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/, 'Please fill a valid website URL'] 
-    },
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    website: { type: String },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', 
+      ref: 'User',
       required: true
     }
   },
-  specs: {
-    type: mongoose.Schema.Types.Mixed,
-    default: {} 
-  },
-  uploadDate: {
-    type: Date,
-    default: Date.now
-  },
-}, {
-  timestamps: true
+  specs: { type: Object }
 });
 
-const Model = mongoose.model('Model', ModelSchema);
-
-export default Model;
+const UploadFile = mongoose.model('UploadFile', uploadFileSchema);
+export default UploadFile;
