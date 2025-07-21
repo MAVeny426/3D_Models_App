@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { Upload } from '@aws-sdk/lib-storage';
+import FormData from 'form-data'; 
+import fs from 'fs'; 
 
 import { auth } from '../Middleware/authMiddleware.js';
 import Model from '../Models/UploadFiles.js';
@@ -26,16 +26,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  }
-});
-
-const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
-
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
@@ -48,17 +38,32 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 }
 });
 
-async function deleteFileFromS3(key) {
-  if (!key) return;
-  const params = {
-    Bucket: S3_BUCKET_NAME,
-    Key: key,
-  };
+const PINATA_API_KEY = process.env.PINATA_API_KEY;
+const PINATA_SECRET_API_KEY = process.env.PINATA_SECRET_API_KEY;
+const PINATA_API_URL = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
+const PINATA_UNPIN_URL = 'https://api.pinata.cloud/pinning/unpin/';
+const PINATA_GATEWAY = 'https://gateway.pinata.cloud/ipfs/';
+
+
+async function deleteFileFromPinata(ipfsCid) {
+  if (!ipfsCid) return;
   try {
-    await s3Client.send(new DeleteObjectCommand(params));
-    console.log(`Successfully deleted ${key} from S3`);
+    const response = await fetch(`${PINATA_UNPIN_URL}${ipfsCid}`, {
+      method: 'POST',
+      headers: {
+        'pinata_api_key': PINATA_API_KEY,
+        'pinata_secret_api_key': PINATA_SECRET_API_KEY
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(`Failed to unpin ${ipfsCid} from Pinata:`, errorData);
+      throw new Error(`Pinata unpin failed: ${errorData.error || response.statusText}`);
+    }
+    console.log(`Successfully unpinned ${ipfsCid} from Pinata`);
   } catch (err) {
-    console.error(`Failed to delete ${key} from S3:`, err);
+    console.error(`Error during Pinata unpin operation for ${ipfsCid}:`, err);
   }
 }
 
@@ -66,7 +71,7 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
   console.log('--- Incoming Model Upload Request ---');
   console.log('Authenticated User (req.user):', req.user ? req.user.email : 'N/A');
 
-  let uploadedS3Key = null;
+  let uploadedIpfsCid = null; 
 
   try {
     if (!req.user || !req.user.id) {
@@ -94,37 +99,57 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
       }
     }
 
-    const fileNameInS3 = `models/${Date.now()}-${req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    uploadedS3Key = fileNameInS3;
-
-    const uploadParams = {
-      Bucket: S3_BUCKET_NAME,
-      Key: fileNameInS3,
-      Body: req.file.buffer,
-      ContentType: req.file.mimetype,
-      ACL: 'public-read'
-    };
-
-    const parallelUploads3 = new Upload({
-      client: s3Client,
-      params: uploadParams,
+    const formData = new FormData();
+    formData.append('file', req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
     });
 
-    parallelUploads3.on('httpUploadProgress', (progress) => {
-      console.log(`S3 Upload Progress for ${fileNameInS3}: ${Math.round(progress.loaded / progress.total * 100)}%`);
+    const options = JSON.stringify({
+      cidVersion: 0,
+      wrapWithDirectory: false
+    });
+    formData.append('pinataOptions', options);
+
+    const metadata = JSON.stringify({
+      name: req.file.originalname,
+      keyvalues: {
+        creator: creatorName,
+        category: category,
+        userId: req.user.id
+      }
+    });
+    formData.append('pinataMetadata', metadata);
+
+
+    console.log(`Attempting to upload ${req.file.originalname} to Pinata...`);
+    const pinataResponse = await fetch(PINATA_API_URL, {
+      method: 'POST',
+      headers: {
+        'pinata_api_key': PINATA_API_KEY,
+        'pinata_secret_api_key': PINATA_SECRET_API_KEY,
+      },
+      body: formData
     });
 
-    const data = await parallelUploads3.done();
-    const glbUrl = data.Location;
+    if (!pinataResponse.ok) {
+      const errorData = await pinataResponse.json();
+      console.error('Pinata upload failed:', errorData);
+      throw new Error(`Pinata upload failed: ${errorData.error || pinataResponse.statusText}`);
+    }
 
-    console.log('S3 Upload successful, GLB URL:', glbUrl);
+    const pinataData = await pinataResponse.json();
+    uploadedIpfsCid = pinataData.IpfsHash; 
+    const glbUrl = `${PINATA_GATEWAY}${pinataData.IpfsHash}`;
+
+    console.log('Pinata Upload successful, GLB URL:', glbUrl);
 
     const newModel = new Model({
       name,
       description,
       category,
       glbUrl: glbUrl,
-      s3Key: fileNameInS3,
+      ipfsCid: uploadedIpfsCid,
       creator: {
         name: creatorName,
         email: creatorEmail,
@@ -145,9 +170,9 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
     console.error('--- Model Upload Route Caught Error ---');
     console.error('Full Error Object:', err);
 
-    if (uploadedS3Key) {
-      console.log(`Attempting to clean up S3 file (${uploadedS3Key}) due to subsequent error.`);
-      await deleteFileFromS3(uploadedS3Key);
+    if (uploadedIpfsCid) {
+      console.log(`Attempting to unpin ${uploadedIpfsCid} due to subsequent error.`);
+      await deleteFileFromPinata(uploadedIpfsCid);
     }
 
     if (err instanceof multer.MulterError) {
@@ -215,10 +240,10 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(403).json({ msg: 'Unauthorized to delete this model.' });
     }
 
-    if (model.s3Key) {
-      await deleteFileFromS3(model.s3Key);
+    if (model.ipfsCid) {
+      await deleteFileFromPinata(model.ipfsCid);
     } else {
-      console.warn(`Model ${model._id} has no s3Key, skipping S3 deletion.`);
+      console.warn(`Model ${model._id} has no ipfsCid, skipping Pinata unpin.`);
     }
 
     await model.deleteOne();

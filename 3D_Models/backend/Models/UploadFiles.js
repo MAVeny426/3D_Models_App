@@ -5,7 +5,7 @@ const uploadFileSchema = new mongoose.Schema({
   description: { type: String, required: true },
   category: { type: String, required: true },
   glbUrl: { type: String, required: true },
-  s3Key: { type: String, required: false },
+  ipfsCid: { type: String, required: false }, 
   uploadDate: { type: Date, default: Date.now },
   creator: {
     name: { type: String, required: true },
