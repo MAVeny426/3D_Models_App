@@ -3,10 +3,8 @@
 This is a full-stack web application designed to display 3D models in GLB format. It features a dashboard for uploading 3D models to a MongoDB database and serves them for display on the frontend.
 
 ## 🚀 Live Demo
-- Frontend: ```
-- https://threed-models-app-1zkr.onrender.com ```
-- Backend : ```
-- https://threed-models-app.onrender.com ```
+- Frontend: https://threed-models-app-1zkr.onrender.com
+- Backend : https://threed-models-app.onrender.com 
   
 
 ## ✨ Features
