@@ -8,6 +8,7 @@ This is a full-stack web application designed to display 3D models in GLB format
   
 
 ## ✨ Features
+
   - 3D Model Display: Renders GLB-formatted 3D models on the web.
 
   - Home : Provides an interface for authenticated users to upload new 3D models.
@@ -19,8 +20,8 @@ This is a full-stack web application designed to display 3D models in GLB format
   - CORS Configuration: Properly configured for secure communication between frontend and backend.
  
  ## 🛠️ Technologies Used
-
--- Frontend (frontend directory)
+ 
+ Frontend (frontend directory)
 
     - React: A JavaScript library for building user interfaces.
 
@@ -37,7 +38,7 @@ This is a full-stack web application designed to display 3D models in GLB format
     - Tailwind CSS: A utility-first CSS framework for rapid UI development.
     
     
--- Backend (backend directory)
+ Backend (backend directory)
 
    - Node.js: JavaScript runtime environment.
 
