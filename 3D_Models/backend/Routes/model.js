@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import FormData from 'form-data';
+import fetch from 'node-fetch'; 
 
 import { auth } from '../Middleware/authMiddleware.js';
 import Model from '../Models/UploadFiles.js';
@@ -28,7 +29,6 @@ const PINATA_SECRET_API_KEY = process.env.PINATA_SECRET_API_KEY;
 const PINATA_API_URL = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
 const PINATA_UNPIN_URL = 'https://api.pinata.cloud/pinning/unpin/';
 const PINATA_GATEWAY = 'https://gateway.pinata.cloud/ipfs/';
-
 
 async function deleteFileFromPinata(ipfsCid) {
   if (!ipfsCid) return;
@@ -111,6 +111,7 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
     const pinataResponse = await fetch(PINATA_API_URL, {
       method: 'POST',
       headers: {
+        ...formData.getHeaders(), // CRUCIAL: Use form-data's headers
         'pinata_api_key': PINATA_API_KEY,
         'pinata_secret_api_key': PINATA_SECRET_API_KEY,
       },
@@ -165,7 +166,7 @@ router.post('/upload', auth, upload.single('glbFile'), async (req, res) => {
     }
     if (err.name === 'ValidationError') {
       const messages = Object.values(err.errors).map(val => val.message);
-      return res.status(400).json({ msg: messages.join(', ') });
+      return res.status(400).json({ msg: `Validation failed: ${messages.join(', ')}` });
     }
     res.status(500).json({ msg: 'Server error during model upload.', error: err.message });
   }

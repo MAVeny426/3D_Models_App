@@ -1,4 +1,3 @@
-// backend/Models/UploadFiles.js
 import mongoose from 'mongoose';
 
 const modelSchema = new mongoose.Schema({
